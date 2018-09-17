@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "ptx-support",
+    "ptx-support-macros",
+    "examples/cuda-println",
+]
