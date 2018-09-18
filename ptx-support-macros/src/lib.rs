@@ -47,7 +47,8 @@ pub fn cuda_printf(input: TokenStream) -> TokenStream {
 
     let arg_types = wrapped_args.iter().map(|item| item.inner_ty.clone());
     let arg_names = wrapped_args.iter().map(|item| item.inner_name.clone());
-    let lowered_args = wrapped_args.iter().map(|item| item.lower_as.clone());
+    let ffi_types = wrapped_args.iter().map(|item| item.ffi_ty.clone());
+    let ffi_args = wrapped_args.iter().map(|item| item.ffi_expr.clone());
 
     let arg_generics = wrapped_args
         .iter()
@@ -59,9 +60,14 @@ pub fn cuda_printf(input: TokenStream) -> TokenStream {
             pub fn vprintf(format: *const u8, valist: *const u8) -> i32;
         }
 
+        #[repr(C)]
+        struct LocalPrintfArgs(#(#ffi_types),*);
+
         fn local_typed_vprintf<#(#arg_generics),*>(format: *const u8, #(#arg_names: #arg_types),*) {
+            let args = LocalPrintfArgs(#(#ffi_args),*);
+
             unsafe {
-                vprintf(format, ::core::mem::transmute(&(#(#lowered_args),*)));
+                vprintf(format, ::core::mem::transmute(&args));
             }
         }
 

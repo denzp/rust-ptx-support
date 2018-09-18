@@ -3,4 +3,5 @@ members = [
     "ptx-support",
     "ptx-support-macros",
     "examples/cuda-println",
+    "examples/cuda-panic",
 ]

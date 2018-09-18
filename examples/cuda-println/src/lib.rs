@@ -8,7 +8,6 @@ pub use self::device::*;
 #[cfg(target_os = "cuda")]
 mod device {
     use ptx_support::prelude::*;
-    use ptx_support_macros::cuda_printf;
 
     #[no_mangle]
     pub unsafe extern "ptx-kernel" fn example_kernel(a: f64, b: f64) {

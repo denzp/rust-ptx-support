@@ -20,7 +20,9 @@ pub struct WrappedArg {
     pub inner_name: Ident,
     pub inner_ty: TokenStream,
     pub inner_generic: Option<Ident>,
-    pub lower_as: TokenStream,
+
+    pub ffi_ty: TokenStream,
+    pub ffi_expr: TokenStream,
 }
 
 pub fn wrap_args(formatted: &[Arg], exprs: &[Expr]) -> Result<Vec<WrappedArg>, PrintSyscallError> {
@@ -52,84 +54,108 @@ pub fn wrap_args(formatted: &[Arg], exprs: &[Expr]) -> Result<Vec<WrappedArg>, P
 
             match arg {
                 Arg(_, _, _, None, ArgType::Signed) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => i32 },
+
                     inner_ty: quote_spanned! { expr.span() => i32 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I8), ArgType::Signed) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => i8 },
+
                     inner_ty: quote_spanned! { expr.span() => i8 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I16), ArgType::Signed) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => i16 },
+
                     inner_ty: quote_spanned! { expr.span() => i16 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I64), ArgType::Signed) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => i64 },
+
                     inner_ty: quote_spanned! { expr.span() => i64 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, None, ArgType::Unsigned) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => u32 },
+
                     inner_ty: quote_spanned! { expr.span() => u32 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I8), ArgType::Unsigned) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => u8 },
+
                     inner_ty: quote_spanned! { expr.span() => u8 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I16), ArgType::Unsigned) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => u16 },
+
                     inner_ty: quote_spanned! { expr.span() => u16 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, Some(ArgLength::I64), ArgType::Unsigned) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => u64 },
+
                     inner_ty: quote_spanned! { expr.span() => u64 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, None, ArgType::Char) => Ok(WrappedArg {
-                    lower_as: quote_spanned! {expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => i8 },
+
                     inner_ty: quote_spanned! { expr.span() => char },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, None, ArgType::Double) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name },
+                    ffi_ty: quote_spanned! { expr.span() => f64 },
+
                     inner_ty: quote_spanned! { expr.span() => f64 },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, None, ArgType::StringPointer) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name.as_ref().as_ptr() },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name.as_ref().as_ptr() },
+                    ffi_ty: quote_spanned! { expr.span() => *const u8 },
+
                     inner_ty: quote_spanned! { expr.span() => impl AsRef<str> },
                     inner_generic: None,
                     inner_name,
                 }),
 
                 Arg(_, _, _, None, ArgType::Pointer) => Ok(WrappedArg {
-                    lower_as: quote_spanned! { expr.span() => #inner_name },
+                    ffi_expr: quote_spanned! { expr.span() => #inner_name as *const _ },
+                    ffi_ty: quote_spanned! { expr.span() => *const u8 },
+
                     inner_ty: quote_spanned! { expr.span() => *const #generic_arg_name },
                     inner_generic: Some(generic_arg_name),
                     inner_name,
@@ -230,14 +256,26 @@ mod tests {
         );
 
         assert_eq!(
-            stringify_token_streams(wrapped.iter().map(|item| item.lower_as.clone())),
+            stringify_token_streams(wrapped.iter().map(|item| item.ffi_ty.clone())),
+            vec![
+                "i32".to_owned(),
+                "u32".to_owned(),
+                "i8".to_owned(),
+                "f64".to_owned(),
+                "* const u8".to_owned(),
+                "* const u8".to_owned(),
+            ],
+        );
+
+        assert_eq!(
+            stringify_token_streams(wrapped.iter().map(|item| item.ffi_expr.clone())),
             vec![
                 "arg_0".to_owned(),
                 "arg_1".to_owned(),
                 "arg_2".to_owned(),
                 "arg_3".to_owned(),
                 "arg_4 . as_ref ( ) . as_ptr ( )".to_owned(),
-                "arg_5".to_owned(),
+                "arg_5 as * const _".to_owned(),
             ],
         );
     }

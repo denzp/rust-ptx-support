@@ -4,4 +4,11 @@ version = "0.1.0"
 authors = ["Denys Zariaiev <denys.zariaiev@gmail.com>"]
 edition = "2018"
 
-[dependencies]
+[dependencies.ptx-support-macros]
+optional = true
+version = "0.1"
+path = "../ptx-support-macros"
+
+[features]
+default = ["macros"]
+macros = ["ptx-support-macros"]
