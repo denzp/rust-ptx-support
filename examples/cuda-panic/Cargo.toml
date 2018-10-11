@@ -5,7 +5,7 @@ authors = ["Denys Zariaiev <denys.zariaiev@gmail.com>"]
 edition = "2018"
 
 [build-dependencies]
-ptx-builder = { git = "https://github.com/denzp/rust-ptx-builder" }
+ptx-builder = "0.5"
 
 [target.'cfg(not(target_os = "cuda"))'.dependencies]
 cuda = { git = "https://github.com/japaric/cuda" }

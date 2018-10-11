@@ -1,7 +1,9 @@
 #![deny(warnings)]
 #![feature(proc_macro_diagnostic)]
 
-use proc_macro::TokenStream;
+extern crate proc_macro;
+use crate::proc_macro::TokenStream;
+
 use proc_macro2::Span;
 use quote::*;
 use syn::parse_macro_input;

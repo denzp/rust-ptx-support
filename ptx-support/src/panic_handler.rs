@@ -3,7 +3,6 @@ use core::panic::PanicInfo;
 #[cfg(feature = "macros")]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    use core::intrinsics::breakpoint;
     use crate::prelude::*;
 
     let (file, line) = match info.location() {
@@ -12,7 +11,7 @@ fn panic(info: &PanicInfo) -> ! {
     };
 
     cuda_printf!(
-        "Panicked at '%s:%u' on block(%lu,%lu,%lu) and thread(%lu,%lu,%lu)\n",
+        "Kernel panicked at '%s:%u' on block(%lu,%lu,%lu) and thread(%lu,%lu,%lu)\n",
         file,
         line,
         Context::block().index().x,
@@ -24,10 +23,9 @@ fn panic(info: &PanicInfo) -> ! {
     );
 
     unsafe {
-        breakpoint();
+        core::intrinsics::breakpoint();
+        core::hint::unreachable_unchecked();
     }
-
-    loop {}
 }
 
 #[cfg(not(feature = "macros"))]
@@ -52,7 +50,6 @@ fn panic(info: &PanicInfo) -> ! {
 
     unsafe {
         __assertfail("Panicked".as_ptr(), file.as_ptr(), line, null(), 1);
+        core::hint::unreachable_unchecked();
     }
-
-    loop {}
 }
