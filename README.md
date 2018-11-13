@@ -8,5 +8,5 @@ Please expect major changes in the APIs.
 ## Ergonomics questions and missing features
 - [x] [Safe `cuda_printf!` macro](examples/cuda-println/src/main.rs#L10)
 - [x] Proper panic handler
-- [ ] Convinient block and thread accessors (temporary API is here)
+- [x] Convinient block and thread accessors (still needs a discussion)
 - [ ] Dynamic memory allocation (based on `malloc` / `free` syscalls)

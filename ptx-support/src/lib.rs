@@ -2,7 +2,7 @@
 #![no_std]
 #![cfg_attr(
     target_os = "cuda",
-    feature(platform_intrinsics, proc_macro_hygiene, core_intrinsics)
+    feature(proc_macro_hygiene, core_intrinsics, stdsimd)
 )]
 
 #[cfg(target_os = "cuda")]
