@@ -2,6 +2,7 @@
 members = [
     "ptx-support",
     "ptx-support-macros",
-    "examples/cuda-println",
-    "examples/cuda-panic",
+    "examples/cuda-printing",
+    "examples/cuda-panic-with-macros",
+    "examples/cuda-panic-no-macros",
 ]

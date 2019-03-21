@@ -1,5 +1,5 @@
 [package]
-name = "cuda-panic"
+name = "cuda-panic-no-macros"
 version = "0.1.0"
 authors = ["Denys Zariaiev <denys.zariaiev@gmail.com>"]
 edition = "2018"
@@ -11,4 +11,4 @@ ptx-builder = "0.5"
 cuda = { git = "https://github.com/japaric/cuda" }
 
 [target.'cfg(target_os = "cuda")'.dependencies]
-ptx-support = { path = "../../ptx-support" }
+ptx-support = { path = "../../ptx-support", default-features = false }

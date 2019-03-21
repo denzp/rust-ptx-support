@@ -11,7 +11,7 @@ fn panic(info: &PanicInfo) -> ! {
     };
 
     cuda_printf!(
-        "Kernel panicked at '%s:%u' on block(%lu,%lu,%lu) and thread(%lu,%lu,%lu)\n",
+        "Kernel panicked at '%s:%u' on block(%lu,%lu,%lu) and thread(%lu,%lu,%lu).\n",
         file,
         line,
         Context::block().index().x,

@@ -1,5 +1,5 @@
 [package]
-name = "cuda-println"
+name = "cuda-printing"
 version = "0.1.0"
 authors = ["Denys Zariaiev <denys.zariaiev@gmail.com>"]
 edition = "2018"
@@ -9,6 +9,7 @@ ptx-builder = "0.5"
 
 [target.'cfg(not(target_os = "cuda"))'.dependencies]
 cuda = { git = "https://github.com/japaric/cuda" }
+gag = "0.1"
 
 [target.'cfg(target_os = "cuda")'.dependencies]
 ptx-support = { path = "../../ptx-support" }
