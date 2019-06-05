@@ -8,13 +8,16 @@ pub unsafe extern "ptx-kernel" fn example_kernel(a: f64, b: f64) {
     use ptx_support::prelude::*;
 
     cuda_printf!(
-        "Hello from block(%lu,%lu,%lu) and thread(%lu,%lu,%lu)\n",
+        "Hello from block(%lu,%lu,%lu) and thread(%lu,%lu,%lu), with grid (%lu,%lu,%lu)\n",
         Context::block().index().x,
         Context::block().index().y,
         Context::block().index().z,
         Context::thread().index().x,
         Context::thread().index().y,
         Context::thread().index().z,
+        Context::grid().dims().x,
+        Context::grid().dims().y,
+        Context::grid().dims().z,
     );
 
     if Context::block().index() == (0, 0, 0) && Context::thread().index() == (0, 0, 0) {
