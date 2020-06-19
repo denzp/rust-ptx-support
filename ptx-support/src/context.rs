@@ -11,6 +11,11 @@ pub struct Block {
 }
 
 #[derive(Debug)]
+pub struct Grid {
+    dimensions: Vec3,
+}
+
+#[derive(Debug)]
 pub struct Thread {
     index: Vec3,
 }
@@ -40,6 +45,17 @@ impl Context {
         }
     }
 
+    pub fn grid() -> Grid {
+        unsafe {
+            Grid {
+                dimensions: Vec3 {
+                    x: _grid_dim_x() as u64,
+                    y: _grid_dim_y() as u64,
+                    z: _grid_dim_z() as u64,
+                },
+            }
+        }
+    }
     pub fn thread() -> Thread {
         unsafe {
             Thread {
@@ -58,6 +74,12 @@ impl Block {
         &self.index
     }
 
+    pub fn dims(&self) -> &Vec3 {
+        &self.dimensions
+    }
+}
+
+impl Grid {
     pub fn dims(&self) -> &Vec3 {
         &self.dimensions
     }
